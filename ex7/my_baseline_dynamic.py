@@ -4,8 +4,8 @@
 """
 B4輪講最終課題 パターン認識に挑戦してみよう
 ベースラインスクリプト
-特徴量；周波数領域における分布
-識別器；MLP
+特徴量；周波数領域における分布(MFCC)
+識別器；HMM
 """
 
 
@@ -70,17 +70,16 @@ def plot_confusion_matrix(predict, ground_truth, title=None, cmap=plt.cm.Blues):
     Returns:
         Nothing
     """
-
     cm = confusion_matrix(predict, ground_truth)
     print(cm)
-    # plt.figure()
-    # plt.imshow(cm, interpolation="nearest", cmap=cmap)
-    # plt.title(title)
-    # plt.colorbar()
-    # plt.tight_layout()
-    # plt.ylabel("Predicted")
-    # plt.xlabel("Ground truth")
-    # plt.show()
+    plt.figure()
+    plt.imshow(cm, interpolation="nearest", cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    plt.tight_layout()
+    plt.ylabel("Predicted")
+    plt.xlabel("Ground truth")
+    plt.show()
 
 
 def write_result(paths, outputs):
@@ -133,6 +132,7 @@ def main(best_n_components):
 
     models = []
 
+    # 1回目の実行時に最適な状態数を決定する
     if best_n_components is None:
         # 状態数の候補
         n_components_candidates = [3, 4, 5, 6, 7, 8, 9, 10]
@@ -162,6 +162,7 @@ def main(best_n_components):
 
         print("最適な状態数:", best_n_components)
     else:
+        # 2回目以降は最適な状態数が与えられているので、それを使用
         for label_idx in range(10):
             X = np.vstack(features_by_label_concatenated[label_idx])
             lengths = lengths_by_label[label_idx]
